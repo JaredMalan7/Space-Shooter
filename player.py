@@ -24,3 +24,15 @@ class Player(pygame.sprite.Sprite):
         if self.health <= 0:
             print("Game Over!")
             pygame.quit()  # Exit game when health reaches 0
+
+    #Draws the health bar as 3 green rectangles at the top-left corner.
+    def draw_health_bar(self, screen):
+        bar_width = 30
+        bar_height = 10
+        spacing = 5
+        x = 20
+        y = 20
+        neon_green = (57, 255, 20) #neon green
+
+        for i in range(self.health):
+            pygame.draw.rect(screen, neon_green, (x + (i * (bar_width + spacing)), y, bar_width, bar_height))

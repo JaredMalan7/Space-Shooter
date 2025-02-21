@@ -129,6 +129,15 @@ while running:
             print("Game Over! Player crashed into an enemy.")
             pygame.quit()
 
+        # 5 Player Bullets hitting Asteroids (Destroy Asteroids)
+        asteroid_hits = pygame.sprite.groupcollide(asteroids, bullets, True, True)  # Remove both bullet & asteroid
+        if asteroid_hits:
+            print("Asteroid Destroyed!")
+            for _ in range(len(asteroid_hits)):  # Respawn the same number of destroyed asteroids
+                new_asteroid = Asteroid()
+                all_sprites.add(new_asteroid)
+                asteroids.add(new_asteroid)
+
     # Handle all collisions
     handle_collisions()
 
@@ -142,6 +151,9 @@ while running:
     # Fill Screen Background
     screen.fill(BLACK)
     all_sprites.draw(screen)
+
+    # Draw Player Health Bar
+    player.draw_health_bar(screen)
 
     # Update Display
     pygame.display.flip()
