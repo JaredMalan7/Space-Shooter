@@ -1,5 +1,6 @@
 import pygame
 from player import Player
+from asteroid import Asteroid
 
 # Initialize PyGame
 pygame.init()
@@ -21,6 +22,13 @@ player = Player()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
+#Load Asteroid
+asteroids = pygame.sprite.Group()
+for _ in range(5): #Create 5 asteroid to start
+    asteroid = Asteroid()
+    all_sprites.add(asteroid)
+    asteroids.add(asteroid)
+
 # Game Loop
 running = True
 clock = pygame.time.Clock()
@@ -36,6 +44,9 @@ while running:
 
     #update Player Movement
     player.update(keys) # Calls update() to move the player
+
+    #Update Asteroids
+    asteroids.update()
 
     # Fill Screen Background
     screen.fill(BLACK)
