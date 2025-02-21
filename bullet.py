@@ -1,10 +1,19 @@
 import pygame
+import os
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, speed, is_player=False):
         super().__init__()
-        self.image = pygame.Surface((5, 15))  # Small bullet shape
-        self.image.fill((255, 0, 0) if not is_player else (0, 255, 0))  # Red for enemies, green for player
+
+        # Load different bullet images for player and enemy
+        if is_player:
+            image_path = os.path.join("assets", "player-bullet.png")  # Player bullet image
+        else:
+            image_path = os.path.join("assets", "enemy-bullet.png")  # Enemy bullet image
+
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image, (10, 20))  # Resize bullet
+
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = -speed if is_player else speed  # Player bullets go up, enemy bullets go down

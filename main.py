@@ -64,10 +64,9 @@ while running:
     #update Player Movement
     player.update(keys) # Calls update() to move the player
 
-    #Update Enemies & shooting
-    enemies.update()
+    # #Update Enemies & shooting
     for enemy in enemies:
-        bullet = enemy.shoot()
+        bullet = enemy.update()  # Update enemy and check if it shoots
         if bullet:
             all_sprites.add(bullet)
             enemy_bullets.add(bullet)
@@ -75,6 +74,10 @@ while running:
 
     #Update Asteroids
     asteroids.update()
+
+    #Update Bullets
+    bullets.update()
+    enemy_bullets.update()
 
     # Fill Screen Background
     screen.fill(BLACK)
