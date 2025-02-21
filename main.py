@@ -33,14 +33,31 @@ for _ in range(5): #Create 5 asteroid to start
 
 # Load Enemies
 enemies = pygame.sprite.Group()
-for _ in range(3):
-    enemy = Enemy()
-    all_sprites.add(enemy)
-    enemies.add(enemy)
-
-# Load Bullets
-bullets = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
+
+# Wave Variables
+wave = 1
+max_waves = 3  # Number of waves per level
+enemies_per_wave = 3  # Number of enemies per wave
+wave_timer = 180  # Timer before next wave (3 seconds at 60 FPS)
+
+# Function to spawn a new wave of enemies
+def spawn_wave():
+    global wave
+    if wave <= max_waves:
+        for _ in range(enemies_per_wave):
+            enemy = Enemy()
+            all_sprites.add(enemy)
+            enemies.add(enemy)
+        wave += 1  # Move to the next wave
+
+# Spawn first wave at game start
+spawn_wave()
+
+# # Load Bullets
+# bullets = pygame.sprite.Group()
+# enemy_bullets = pygame.sprite.Group()
 
 # Game Loop
 running = True
@@ -62,7 +79,7 @@ while running:
     keys = pygame.key.get_pressed() #Gets current keyboard state
 
     #update Player Movement
-    player.update(keys) # Calls update() to move the player
+    player.update(keys)
 
     # #Update Enemies & shooting
     for enemy in enemies:
@@ -72,12 +89,17 @@ while running:
             enemy_bullets.add(bullet)
 
 
-    #Update Asteroids
+    #Update Asteroids & bullets
     asteroids.update()
-
-    #Update Bullets
     bullets.update()
     enemy_bullets.update()
+
+    # Check if all enemies are defeated
+    if not enemies and wave <= max_waves:
+        wave_timer -= 1
+        if wave_timer <= 0:
+            spawn_wave()
+            wave_timer = 180  # Reset timer for next wave
 
     # Fill Screen Background
     screen.fill(BLACK)
