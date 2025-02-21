@@ -1,5 +1,4 @@
 import pygame
-
 from player import Player
 
 # Initialize PyGame
@@ -33,7 +32,10 @@ while running:
             running = False
 
     #Get pressed keys
-    keys = pygame.key.get_pressed()
+    keys = pygame.key.get_pressed() #Gets current keyboard state
+
+    #update Player Movement
+    player.update(keys) # Calls update() to move the player
 
     # Fill Screen Background
     screen.fill(BLACK)
