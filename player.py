@@ -9,8 +9,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('assets/player.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect(center=(400, 500))
-        # self.rect.centerx = 400  # Start position (middle bottom of screen)
-        # self.rect.bottom = 580
         self.speed = 5  # Movement speed
         self.health = 3 # Player starts with 3 health points
 
