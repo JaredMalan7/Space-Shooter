@@ -1,6 +1,7 @@
 import pygame
 from player import Player
 from asteroid import Asteroid
+from enemy import Enemy
 
 # Initialize PyGame
 pygame.init()
@@ -29,6 +30,13 @@ for _ in range(5): #Create 5 asteroid to start
     all_sprites.add(asteroid)
     asteroids.add(asteroid)
 
+# Load Enemies
+enemies = pygame.sprite.Group()
+for _ in range(3):
+    enemy = Enemy()
+    all_sprites.add(enemy)
+    enemies.add(enemy)
+
 # Game Loop
 running = True
 clock = pygame.time.Clock()
@@ -47,6 +55,10 @@ while running:
 
     #Update Asteroids
     asteroids.update()
+
+    #Update Enemies
+    enemies.update()
+
 
     # Fill Screen Background
     screen.fill(BLACK)
