@@ -37,21 +37,38 @@ enemies = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
-# Wave Variables
-wave = 1
-max_waves = 3  # Number of waves per level
-enemies_per_wave = 3  # Number of enemies per wave
+# Wave & Game Progression Variables
+current_wave = 1
+enemies_per_wave = 3  # Starts with 3 enemies
+total_enemies_defeated = 0
+max_enemies_to_defeat = 18  # Stop spawning after 18 enemies are defeated
 wave_timer = 180  # Timer before next wave (3 seconds at 60 FPS)
 
 # Function to spawn a new wave of enemies
 def spawn_wave():
-    global wave
-    if wave <= max_waves:
-        for _ in range(enemies_per_wave):
-            enemy = Enemy()
-            all_sprites.add(enemy)
-            enemies.add(enemy)
-        wave += 1  # Move to the next wave
+    global current_wave, enemies_per_wave, total_enemies_defeated
+
+    # Stop spawning new waves after 18 total enemies have been defeated
+    if total_enemies_defeated >= max_enemies_to_defeat:
+        print("All enemies defeated! Prepare for Boss Battle...")
+        return
+
+    # Increase enemy count per wave (caps at 18 enemies total)
+    enemies_per_wave = min(current_wave + 2, max_enemies_to_defeat - total_enemies_defeated)
+
+    for _ in range(enemies_per_wave):
+        # Alternate between enemy types per wave
+        enemy_type = "ship-1.png" if current_wave % 2 == 1 else "ship-2.png"
+
+        # After wave 3, mix both enemy types randomly
+        if current_wave >= 3:
+            enemy_type = random.choice(["ship-1.png", "ship-2.png"])
+
+        enemy = Enemy(enemy_type)  # Pass the enemy type to the class
+        all_sprites.add(enemy)
+        enemies.add(enemy)
+
+    current_wave += 1  # Move to the next wave
 
 # Spawn first wave at game start
 spawn_wave()
@@ -61,7 +78,6 @@ running = True
 clock = pygame.time.Clock()
 
 while running:
-    # Handle Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -90,26 +106,34 @@ while running:
 
     # Collision Handling
 
-    # 1 Player collides with Asteroids (Player takes damage)
-    if pygame.sprite.spritecollide(player, asteroids, False):
-        player.take_damage()
+    #
+    def handle_collisions():
+        global total_enemies_defeated  #
 
-    # 2 Player Bullets hitting Enemies (Destroy Enemies)
-    enemy_hits = pygame.sprite.groupcollide(enemies, bullets, True, True)  # Remove both bullet & enemy
-    if enemy_hits:
-        print("Enemy Destroyed!")
+        # 1 Player collides with Asteroids (Player takes damage)
+        if pygame.sprite.spritecollide(player, asteroids, False):
+            player.take_damage()
 
-    # 3 Enemy Bullets hitting the Player (Player takes damage)
-    if pygame.sprite.spritecollide(player, enemy_bullets, True):
-        player.take_damage()
+        # 2 Player Bullets hitting Enemies (Destroy Enemies)
+        enemy_hits = pygame.sprite.groupcollide(enemies, bullets, True, True)  # Remove both bullet & enemy
+        if enemy_hits:
+            total_enemies_defeated += len(enemy_hits)  #
+            print("Enemy Destroyed!")
 
-    # 4 (Optional) Enemy colliding with Player (Game Over)
-    if pygame.sprite.spritecollide(player, enemies, False):
-        print("Game Over! Player crashed into an enemy.")
-        pygame.quit()
+        # 3 Enemy Bullets hitting the Player (Player takes damage)
+        if pygame.sprite.spritecollide(player, enemy_bullets, True):
+            player.take_damage()
+
+        # 4 (Optional) Enemy colliding with Player (Game Over)
+        if pygame.sprite.spritecollide(player, enemies, False):
+            print("Game Over! Player crashed into an enemy.")
+            pygame.quit()
+
+    # Handle all collisions
+    handle_collisions()
 
     # Check if all enemies are defeated before spawning a new wave
-    if not enemies and wave <= max_waves:
+    if not enemies and total_enemies_defeated < max_enemies_to_defeat:
         wave_timer -= 1
         if wave_timer <= 0:
             spawn_wave()
