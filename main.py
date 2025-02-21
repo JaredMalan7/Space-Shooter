@@ -1,5 +1,7 @@
 import pygame
 
+from player import Player
+
 # Initialize PyGame
 pygame.init()
 
@@ -15,6 +17,11 @@ BLACK = (0, 0, 0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Space Shooter")
 
+#Load Player
+player = Player()
+all_sprites = pygame.sprite.Group()
+all_sprites.add(player)
+
 # Game Loop
 running = True
 clock = pygame.time.Clock()
@@ -25,8 +32,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    #Get pressed keys
+    keys = pygame.key.get_pressed()
+
     # Fill Screen Background
     screen.fill(BLACK)
+    all_sprites.draw(screen)
 
     # Update Display
     pygame.display.flip()
