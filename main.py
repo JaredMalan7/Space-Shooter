@@ -2,6 +2,7 @@ import pygame
 from player import Player
 from asteroid import Asteroid
 from enemy import Enemy
+from bullet import Bullet
 
 # Initialize PyGame
 pygame.init()
@@ -37,6 +38,10 @@ for _ in range(3):
     all_sprites.add(enemy)
     enemies.add(enemy)
 
+# Load Bullets
+bullets = pygame.sprite.Group()
+enemy_bullets = pygame.sprite.Group()
+
 # Game Loop
 running = True
 clock = pygame.time.Clock()
@@ -47,18 +52,29 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        # Player Shooting
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            bullet = Bullet(player.rect.centerx, player.rect.top, 7, is_player=True)
+            all_sprites.add(bullet)
+            bullets.add(bullet)
+
     #Get pressed keys
     keys = pygame.key.get_pressed() #Gets current keyboard state
 
     #update Player Movement
     player.update(keys) # Calls update() to move the player
 
+    #Update Enemies & shooting
+    enemies.update()
+    for enemy in enemies:
+        bullet = enemy.shoot()
+        if bullet:
+            all_sprites.add(bullet)
+            enemy_bullets.add(bullet)
+
+
     #Update Asteroids
     asteroids.update()
-
-    #Update Enemies
-    enemies.update()
-
 
     # Fill Screen Background
     screen.fill(BLACK)
