@@ -43,7 +43,7 @@ current_level = 1
 max_level = 3
 current_wave = 1
 enemies_per_wave = 3
-total_enemies_defeated = 0
+total_enemies_defeated = 18
 max_enemies_to_defeat = 18
 wave_timer = 180
 
@@ -94,7 +94,8 @@ def spawn_boss():
 
     if not boss_spawned and current_level <= max_level:
         print(f"⚠️ Boss-{current_level} is entering the battle! ⚠️")
-        boss = Boss(boss_types_by_level[current_level], bullets_per_shot=current_level + 1)
+        boss_image = boss_types_by_level[current_level]
+        boss = Boss(boss_image, bullets_per_shot=current_level + 1)
         all_sprites.add(boss)
         boss_spawned = True
 
@@ -149,7 +150,7 @@ while running:
         if pygame.sprite.spritecollide(player, enemy_bullets, True):
             player.take_damage()
 
-        if pygame.sprite.spritecollide(player, boss_bullets, True):  # Boss bullets now damage the player
+        if pygame.sprite.spritecollide(player, boss_bullets, True):
             player.take_damage()
 
         if pygame.sprite.spritecollide(player, enemies, False):
@@ -170,17 +171,24 @@ while running:
 
             if boss.health <= 0:
                 print(f"Boss-{current_level} Defeated!")
+
+                # ENSURE ALL BOSS BULLETS ARE REMOVED IMMEDIATELY
+                for bullet in boss_bullets:
+                    all_sprites.remove(bullet)  # Remove from screen
+                boss_bullets.empty()  # Clear bullet group
+
+                # ENSURE BOSS IS REMOVED COMPLETELY
+                all_sprites.remove(boss)
                 boss.kill()
-                boss = None  # Remove boss reference
+                boss = None
                 boss_spawned = False
-                boss_bullets.empty()  # Remove boss bullets
 
                 if current_level < max_level:
                     level_transitioning = True
                     level_transition_timer = 300
                 else:
                     print("🎉 YOU WIN! Game Over.")
-                    running = False  # End game properly
+                    running = False
 
     handle_collisions()
 
@@ -190,10 +198,10 @@ while running:
             spawn_wave()
             wave_timer = 180
 
-    if total_enemies_defeated >= max_enemies_to_defeat and not boss_spawned:
+    if total_enemies_defeated >= max_enemies_to_defeat and not boss_spawned and not level_transitioning:
         spawn_boss()
 
-    # Handle Level Transition
+    # ENSURE NO BOSS APPEARS DURING LEVEL TRANSITION
     if level_transitioning:
         level_transition_timer -= 1
         if level_transition_timer <= 0:
