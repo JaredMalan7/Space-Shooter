@@ -39,11 +39,11 @@ enemy_bullets = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 # Level & Wave Progression Variables
-current_level = 3
+current_level = 1
 max_level = 3
 current_wave = 1
 enemies_per_wave = 3
-total_enemies_defeated = 18
+total_enemies_defeated = 0
 max_enemies_to_defeat = 18
 wave_timer = 180
 
